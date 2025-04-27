@@ -19,9 +19,9 @@ object ChatService {
     fun getLastMessages() = chats.values.map { it.messages.lastOrNull()?.text ?: "Нет сообщений" }
 
     fun getMessagesFromChat(userIds: SortedSet<Int>, count: Int = 0): List<Message> {
-        val chat = chats.filter { e -> e.key.containsAll(userIds) }.values.first().messages
+        val chat = chats[userIds]?.messages ?: emptyList()
         if (count > 0) {
-            var chatNew = chat.slice(0..count - 1)
+            var chatNew = chat.take(count)
             chatNew.forEach { message -> message.read = true }
             return chatNew
         }
