@@ -19,14 +19,10 @@ object ChatService {
     fun getLastMessages() = chats.values.map { it.messages.lastOrNull()?.text ?: "Нет сообщений" }
 
     fun getMessagesFromChat(userIds: SortedSet<Int>, count: Int = 0): List<Message> {
-        val chat = chats[userIds]?.messages ?: emptyList()
         if (count > 0) {
-            val chatNew = chat.take(count)
-            chatNew.forEach { message -> message.read = true }
-            return chatNew
+            return  chats[userIds]?.messages?.asSequence()?.take(count)?.onEach { it.read = true }.orEmpty().toList()
         }
-        chat.forEach { message -> message.read = true }
-        return chat
+        return chats[userIds]?.messages?.onEach { it.read = true }.orEmpty()
     }
 
     fun removeChat(userIds: SortedSet<Int>) = chats.remove(userIds)
