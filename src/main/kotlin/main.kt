@@ -21,7 +21,7 @@ object ChatService {
     fun getMessagesFromChat(userIds: SortedSet<Int>, count: Int = 0): List<Message> {
         val chat = chats[userIds]?.messages ?: emptyList()
         if (count > 0) {
-            var chatNew = chat.take(count)
+            val chatNew = chat.take(count)
             chatNew.forEach { message -> message.read = true }
             return chatNew
         }
@@ -31,16 +31,7 @@ object ChatService {
 
     fun removeChat(userIds: SortedSet<Int>) = chats.remove(userIds)
 
-    fun removeMessageFromChat(userIds: SortedSet<Int>, id: Int) {
-        val chat = chats.filter { e -> e.key.containsAll(userIds) }.values.first().messages
-        val iterator = chat.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (item.id == id) {
-                iterator.remove()
-            }
-        }
-    }
+    fun removeMessageFromChat(userIds: SortedSet<Int>, id: Int) = chats[userIds]?.messages?.removeIf { it.id == id }
 
     fun getUnreadChatsCount() = chats.values.count() { chat: Chat -> chat.messages.any { !it.read } }
 
